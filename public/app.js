@@ -231,6 +231,7 @@ function renderCandidates() {
       <div class="legend">${Object.entries(c.breakdown).map(([k, v]) => `<span><b style="background:${COLORS[k]}"></b>${k} ${v}</span>`).join('')}</div>
       <ul class="reasons">
         ${isTop ? '<li class="ok">★ Recommended</li>' : ''}
+        ${c.semantic != null ? `<li class="ok">◆ Superlinked SIE semantic fit ${c.semantic}</li>` : ''}
         ${c.reasons.map(r => `<li class="bad">✕ ${esc(r)}</li>`).join('')}
         ${c.flags.map(r => `<li class="warn">⚠ ${esc(r)}</li>`).join('')}
         ${c.missing.length ? `<li class="warn">Missing: ${esc(c.missing.join(', '))}</li>` : ''}

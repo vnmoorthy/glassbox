@@ -50,7 +50,7 @@ const rid = (p) => p + '_' + Math.random().toString(36).slice(2, 8) + Date.now()
 const DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const hasWord = (text, k) => new RegExp('(^|[^a-z0-9])' + reEsc(k.trim()) + '($|[^a-z0-9])').test(text);
+const hasWord = (text, k) => new RegExp('(^|[^a-z0-9])' + reEsc(k.trim()) + '(?:s|es)?($|[^a-z0-9])').test(text);
 export function parseIntent(mission, now = new Date()) {
   const text = ' ' + mission.toLowerCase() + ' ';
   // category

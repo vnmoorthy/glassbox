@@ -8,9 +8,9 @@ const env = k => process.env[k] && String(process.env[k]).trim();
 const has = (...ks) => ks.every(k => env(k));
 const TIMEOUT = Number(process.env.INTEGRATION_TIMEOUT_MS || 4000);
 
-async function http(url, { method = 'POST', headers = {}, body, auth } = {}) {
+async function http(url, { method = "POST", headers = {}, body, auth, timeout = TIMEOUT } = {}) {
   const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), TIMEOUT);
+  const t = setTimeout(() => ctrl.abort(), timeout);
   try {
     const r = await fetch(url, { method, signal: ctrl.signal, headers: { 'content-type': 'application/json', accept: 'application/json', ...(auth ? { authorization: auth } : {}), ...headers }, body: body ? JSON.stringify(body) : undefined });
     const text = await r.text();
@@ -114,9 +114,9 @@ export const ADAPTERS = {
       const model = env('SUPERLINKED_MODEL') || 'Qwen/Qwen3-Embedding-4B';
       const url = `https://api.superlinked.com/v1/encode/${encodeURIComponent(model)}`;
       const auth = 'Bearer ' + env('SUPERLINKED_API_KEY');
-      const q = await http(url, { auth, body: { items: [{ text: run.mission }], params: { output_types: ['dense'], options: { is_query: true } } } });
-      const d = await http(url, { auth, body: { items: run.candidates.map(c => ({ text: `${c.name}. ${c.tags.join(', ')}. ${Object.values(c.specs).join(', ')}` })), params: { output_types: ['dense'] } } });
-      const vec = x => x?.dense || x?.embedding || x?.vector || (Array.isArray(x) ? x : null);
+      const q = await http(url, { auth, timeout: 20000, body: { items: [{ text: run.mission }], params: { output_types: ['dense'], options: { is_query: true } } } });
+      const d = await http(url, { auth, timeout: 20000, body: { items: run.candidates.map(c => ({ text: `${c.name}. ${c.tags.join(', ')}. ${Object.values(c.specs).join(', ')}` })), params: { output_types: ['dense'] } } });
+      const vec = x => x?.dense?.values || x?.dense || x?.embedding || x?.vector || (Array.isArray(x) ? x : null);
       const list = v => v?.items || v?.data || v?.results || v?.embeddings || (Array.isArray(v) ? v : []);
       const qv = vec(list(q)[0]); const dv = list(d).map(vec);
       if (qv && dv.length === run.candidates.length) {
