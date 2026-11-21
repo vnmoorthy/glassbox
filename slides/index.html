@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Glassbox — Pitch Deck</title>
+<link rel="icon" href="../favicon.svg"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#070910;--text:#eef0ff;--muted:#8e95b8;--violet:#a78bfa;--cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;--red:#f87171;--grad:linear-gradient(135deg,#a78bfa,#60a5fa 50%,#22d3ee);--mono:'JetBrains Mono',monospace}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:#030409;overflow:hidden;font-family:Inter,system-ui,sans-serif;color:var(--text)}
+.stage{position:fixed;inset:0;display:grid;place-items:center}
+.deck{width:1600px;height:900px;position:relative;transform-origin:center;flex:none}
+.slide{position:absolute;inset:0;padding:90px 110px;border-radius:0;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .6s ease, transform .8s cubic-bezier(.2,.8,.2,1);transform:scale(1.03);
+  background:radial-gradient(1000px 600px at 85% -10%,#24185a 0%,transparent 60%),radial-gradient(900px 600px at -10% 110%,#082b3b 0%,transparent 60%),var(--bg)}
+.slide.active{opacity:1;pointer-events:auto;transform:none}
+.slide .orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.25;animation:float 14s ease-in-out infinite}
+@keyframes float{50%{transform:translate(50px,-40px) scale(1.1)}}
+.kicker{font:700 18px/1 Inter;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);display:flex;align-items:center;gap:14px}
+.kicker:before{content:'';width:40px;height:2px;background:var(--grad)}
+h1{font-size:120px;line-height:.95;letter-spacing:-.045em;margin:24px 0;font-weight:900}
+h2{font-size:68px;line-height:1.02;letter-spacing:-.035em;margin:22px 0 30px;font-weight:800;max-width:1300px}
+.grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+p.lead{font-size:30px;line-height:1.4;color:var(--muted);max-width:1150px;margin:0}
+.in{opacity:0;transform:translateY(26px)}
+.slide.active .in{animation:up .8s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes up{to{opacity:1;transform:none}}
+.d1{animation-delay:.1s!important}.d2{animation-delay:.3s!important}.d3{animation-delay:.5s!important}.d4{animation-delay:.7s!important}.d5{animation-delay:.9s!important}.d6{animation-delay:1.1s!important}.d7{animation-delay:1.3s!important}.d8{animation-delay:1.5s!important}.d9{animation-delay:1.7s!important}.d10{animation-delay:1.9s!important}.d11{animation-delay:2.1s!important}
+.foot{position:absolute;left:110px;right:110px;bottom:46px;display:flex;justify-content:space-between;font:600 15px var(--mono);color:#4d5480}
+.card{background:rgba(22,26,48,.7);border:1px solid rgba(148,163,255,.16);border-radius:24px;padding:30px 32px;backdrop-filter:blur(10px)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:30px}
+.q{font-size:30px;font-weight:700;line-height:1.25}
+.q .n{font:800 70px Inter;display:block;margin-bottom:10px}
+.big-num{font-size:96px;font-weight:900;letter-spacing:-.04em;line-height:1}
+.lbl{font-size:20px;color:var(--muted);margin-top:8px}
+.logo{width:110px;height:110px}
+.pill{display:inline-flex;align-items:center;gap:10px;padding:12px 22px;border-radius:99px;border:1px solid rgba(148,163,255,.25);background:rgba(255,255,255,.04);font-size:22px;font-weight:600;margin:0 12px 12px 0}
+/* pipeline */
+.pipe{display:flex;gap:16px;align-items:stretch;margin-top:40px}
+.node{flex:1;border-radius:20px;padding:22px 16px;background:rgba(22,26,48,.8);border:1px solid rgba(148,163,255,.18);text-align:center;position:relative}
+.node b{display:block;font-size:22px;margin-top:8px}.node span{font-size:15px;color:var(--muted)}
+.node .i{font-size:38px}
+.slide.active .node{animation:light 4.5s infinite}
+@keyframes light{0%,100%{border-color:rgba(148,163,255,.18);box-shadow:none}8%{border-color:#22d3ee;box-shadow:0 0 40px -6px #22d3ee}}
+.ledgerbar{margin-top:30px;height:64px;border-radius:16px;border:1px dashed rgba(52,211,153,.5);display:flex;align-items:center;padding:0 24px;gap:14px;font:600 20px var(--mono);color:var(--green);overflow:hidden;position:relative}
+.ledgerbar .blk{flex:none;width:44px;height:30px;border-radius:7px;border:2px solid var(--green);opacity:0}
+.slide.active .ledgerbar .blk{animation:blk .4s forwards}
+@keyframes blk{to{opacity:1}}
+/* chain */
+.chain{display:flex;align-items:center;gap:0;margin-top:50px}
+.cb{width:200px;height:150px;border-radius:20px;border:2px solid var(--green);background:#0f1a1c;padding:18px;font:600 15px var(--mono);color:#9fe8c8;position:relative;flex:none}
+.cb b{font:800 22px Inter;color:#fff;display:block;margin-bottom:10px}
+.lnk{width:60px;height:4px;background:var(--green);flex:none}
+.slide.active .cb.t{animation:tamper 6s infinite}
+.slide.active .lnk.t,.slide.active .cb.t2{animation:tamper2 6s infinite}
+@keyframes tamper{0%,40%{border-color:var(--green);transform:none}45%{transform:rotate(-3deg) scale(1.05)}50%,90%{border-color:var(--red);background:#2a1214;color:#fecaca}}
+@keyframes tamper2{0%,48%{border-color:var(--green);background:var(--green)}55%,90%{border-color:var(--red);background:var(--red)}}
+.slide.active .cb.t2{animation:tamper2b 6s infinite}
+@keyframes tamper2b{0%,52%{border-color:var(--green)}58%,90%{border-color:var(--red);background:#2a1214}}
+.verdict{margin-top:40px;font-size:30px;font-weight:700}
+.verdict .ok{color:var(--green)} .verdict .bad{color:var(--red)}
+/* sponsors */
+.sp{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:10px}
+.spc{border-radius:18px;padding:20px 22px;background:rgba(22,26,48,.75);border:1px solid rgba(148,163,255,.16)}
+.spc b{font-size:24px;display:flex;align-items:center;gap:10px}
+.spc b i{width:14px;height:14px;border-radius:4px;display:inline-block}
+.spc span{font-size:17px;color:var(--muted);display:block;margin-top:6px;line-height:1.35}
+/* mandate */
+.mand{border:2px solid rgba(251,191,36,.55);background:linear-gradient(180deg,rgba(251,191,36,.08),rgba(22,26,48,.8));border-radius:24px;padding:30px 34px;font-size:23px}
+.mand .row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.mand .row span:first-child{color:var(--muted)}
+.btnx{margin-top:22px;display:inline-block;padding:16px 28px;border-radius:14px;background:linear-gradient(135deg,#34d399,#22d3ee);color:#04130e;font-weight:800;font-size:24px}
+.slide.active .btnx{animation:press 3s 1.6s infinite}
+@keyframes press{0%,100%{transform:none}10%{transform:scale(.95)}20%{transform:none;box-shadow:0 0 0 18px rgba(52,211,153,0)}15%{box-shadow:0 0 0 0 rgba(52,211,153,.6)}}
+.check{font-size:25px;line-height:2}
+.check li{list-style:none}.check li:before{content:'✓  ';color:var(--green);font-weight:900}
+.reject li:before{content:'✕  ';color:var(--red)}
+/* nav */
+.progress{position:fixed;left:0;bottom:0;height:4px;background:var(--grad);transition:width .5s}
+.counter{position:fixed;right:22px;bottom:16px;font:600 13px var(--mono);color:#5d6488}
+.hint{position:fixed;left:22px;bottom:16px;font:500 12px var(--mono);color:#3d4366}
+.typing{font:600 38px var(--mono);color:#fff;border-right:4px solid var(--cyan);white-space:nowrap;overflow:hidden;width:0}
+.slide.active .typing{animation:type 2.6s steps(56) .6s forwards, caret .8s step-end infinite}
+@keyframes type{to{width:1180px}}@keyframes caret{50%{border-color:transparent}}
+.bar{height:22px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:14px}
+.bar i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px}
+.slide.active .bar i{animation:fill 1.6s .8s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes fill{to{width:var(--w)}}
+
+/* ===== Operator-console theme (Blueprint dark) ===== */
+:root{--grad:none;--cyan:#4c90f0;--violet:#9881f3;--green:#32a467;--amber:#ec9a3c;--red:#e76a6e;--muted:#abb3bf;--text:#f6f7f9}
+html,body{background:#0b0d10}
+.slide{background:#111418;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:40px 40px;padding-top:110px}
+.slide:before{content:'GLASSBOX // HACKATHON BRIEFING // SANDBOX DATA';position:absolute;top:0;left:0;right:0;height:30px;background:#1e7a4d;color:#e8fff2;font:700 13px/30px 'JetBrains Mono',monospace;letter-spacing:.28em;text-align:center}
+.slide:after{content:'';position:absolute;left:110px;right:110px;top:62px;height:1px;background:#2f343c}
+.slide .orb{display:none}
+.grad{background:none;-webkit-background-clip:initial;background-clip:initial;color:#4c90f0;-webkit-text-fill-color:#4c90f0}
+.kicker{color:#abb3bf;font-size:16px;letter-spacing:.26em}
+.kicker:before{background:#4c90f0;width:26px;height:3px}
+h1{font-weight:800;letter-spacing:-.035em}
+h2{font-weight:700;letter-spacing:-.025em}
+.card,.spc,.node{background:#1c2127;border:1px solid #383e47;border-radius:3px;backdrop-filter:none}
+.card{box-shadow:inset 0 3px 0 #2d72d2}
+.node b{font-weight:700}
+@keyframes light{0%,100%{border-color:#383e47;box-shadow:none}8%{border-color:#4c90f0;box-shadow:inset 0 0 0 1px #4c90f0}}
+.ledgerbar{border-radius:3px;border:1px solid #238551;background:#14211b}
+.ledgerbar .blk{border-radius:2px}
+.cb{border-radius:3px;background:#16201b}
+.mand{border-radius:3px;border:1px solid rgba(236,154,60,.6);border-top:5px solid #ec9a3c;background:#1c2127}
+.btnx{background:#238551;color:#fff;border-radius:3px}
+.pill{border-radius:3px;background:#1c2127;border-color:#404854}
+.spc b i{border-radius:2px}
+.progress{background:#4c90f0}
+.bar{border-radius:2px;background:#2f343c}.bar i{background:#4c90f0;border-radius:0}
+.typing{border-right-color:#4c90f0;font-size:34px}
+.big-num{font-family:'JetBrains Mono',monospace;font-weight:600;letter-spacing:-.04em}
+.q .n{font-family:'JetBrains Mono',monospace}
+.logo rect,.logo path{stroke:#f6f7f9}
+.foot{color:#5f6b7c}
+</style>
+</head>
+<body>
+<div class="stage"><div class="deck" id="deck">
+
+<!-- 1 TITLE -->
+<section class="slide">
+  <div class="orb" style="width:600px;height:600px;background:#7c3aed;right:-120px;top:-180px"></div>
+  <div class="orb" style="width:520px;height:520px;background:#0891b2;left:-160px;bottom:-200px;animation-delay:-6s"></div>
+  <div class="in d1" style="display:flex;align-items:center;gap:30px">
+    <svg class="logo" viewBox="0 0 32 32"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><rect x="3" y="3" width="26" height="26" rx="8" fill="none" stroke="url(#lg)" stroke-width="2.4"/><path d="M10 12h12M10 16h12M10 20h7" stroke="url(#lg)" stroke-width="2.4" stroke-linecap="round"/></svg>
+    <div class="kicker" style="font-size:22px">Personal Agents Hackathon · SF</div>
+  </div>
+  <h1 class="in d2" style="font-size:170px;margin-top:60px">Glassbox</h1>
+  <h2 class="in d3" style="font-size:64px;margin-top:0">The shopping agent <span class="grad">with receipts.</span></h2>
+  <p class="lead in d4">A personal agent that spends your money only with evidence, your rules, your signature, and a ledger nobody can rewrite.</p>
+  <div class="foot"><span>github.com/vnmoorthy/glassbox</span><span>01 / 10</span></div>
+</section>
+
+<!-- 2 PROBLEM -->
+<section class="slide">
+  <div class="kicker in d1">The problem</div>
+  <h2 class="in d2">Agents can already click <span class="grad">“Buy.”</span><br/>Nobody lets them.</h2>
+  <div class="grid3" style="margin-top:50px">
+    <div class="card q in d3"><span class="n grad">?</span>Why did it pick <i>that</i> one, and what did it ignore?</div>
+    <div class="card q in d4"><span class="n grad">⚖</span>Did it follow <i>my</i> rules: budget, size, brands I hate?</div>
+    <div class="card q in d5"><span class="n grad">🔒</span>Can I <i>prove</i> what happened, or could the log be edited?</div>
+  </div>
+  <p class="lead in d6" style="margin-top:46px">Today’s agents answer with a chat bubble: <b style="color:#fff">“Done! ✅”</b> That’s not good enough for money.</p>
+  <div class="foot"><span>Glassbox</span><span>02 / 10</span></div>
+</section>
+
+<!-- 3 INSIGHT -->
+<section class="slide">
+  <div class="orb" style="width:500px;height:500px;background:#22d3ee;right:-100px;bottom:-200px;opacity:.15"></div>
+  <div class="kicker in d1">The insight</div>
+  <h2 class="in d2">Trust = <span class="grad">evidence</span> + <span class="grad">rules</span> + <span class="grad">proof</span>.</h2>
+  <p class="lead in d3">So we built the agent as a glass box. Every step is an event, every event cites its evidence, and every event is hash-chained to the one before it.</p>
+  <div style="margin-top:60px" class="in d4"><div class="typing">&gt; “Noise-cancelling headphones for long flights under $300”</div></div>
+  <div class="grid3 in d6" style="margin-top:60px">
+    <div><div class="big-num grad">25</div><div class="lbl">auditable events per purchase</div></div>
+    <div><div class="big-num grad">100</div><div class="lbl">point score, every point explained</div></div>
+    <div><div class="big-num grad">1</div><div class="lbl">human signature before any money moves</div></div>
+  </div>
+  <div class="foot"><span>Glassbox</span><span>03 / 10</span></div>
+</section>
+
+<!-- 4 LOOP -->
+<section class="slide">
+  <div class="kicker in d1">How it works</div>
+  <h2 class="in d2">A 9-step loop. <span class="grad">Every step on the record.</span></h2>
+  <div class="pipe in d3">
+    <div class="node" style="animation-delay:0s"><div class="i">👂</div><b>Perceive</b><span>parse intent</span></div>
+    <div class="node" style="animation-delay:.5s"><div class="i">🧠</div><b>Recall</b><span>your memory</span></div>
+    <div class="node" style="animation-delay:1s"><div class="i">⚖️</div><b>Govern</b><span>your guardrails</span></div>
+    <div class="node" style="animation-delay:1.5s"><div class="i">🛰</div><b>Source</b><span>5 merchants</span></div>
+    <div class="node" style="animation-delay:2s"><div class="i">🔬</div><b>Verify</b><span>reviews · prices</span></div>
+    <div class="node" style="animation-delay:2.5s"><div class="i">🏆</div><b>Rank</b><span>100-pt score</span></div>
+    <div class="node" style="animation-delay:3s"><div class="i">✍️</div><b>Mandate</b><span>you approve</span></div>
+    <div class="node" style="animation-delay:3.5s"><div class="i">🛒</div><b>Act</b><span>checkout</span></div>
+    <div class="node" style="animation-delay:4s"><div class="i">📚</div><b>Learn</b><span>update memory</span></div>
+  </div>
+  <div class="ledgerbar in d5">LEDGER ▸ <span id="blks" style="display:flex;gap:10px"></span></div>
+  <p class="lead in d6" style="margin-top:34px;font-size:26px">Same engine runs on the server <b style="color:#fff">and</b> fully in your browser. Zero dependencies. Deterministic where money is involved.</p>
+  <div class="foot"><span>Glassbox</span><span>04 / 10</span></div>
+</section>
+
+<!-- 5 RELIABLE CONTEXT -->
+<section class="slide">
+  <div class="kicker in d1">Reliable context</div>
+  <h2 class="in d2">It knows you. <span class="grad">It doesn’t fall for tricks.</span></h2>
+  <div class="grid2" style="margin-top:20px">
+    <div class="card in d3"><div style="font-size:26px;font-weight:800;margin-bottom:14px">🧠 Memory it actually uses</div>
+      <ul class="check" style="padding:0;margin:0"><li>You wear glasses → requires low-clamp pads</li><li>You returned narrow Kestrels → skips Kestrel</li><li>You like eco → small bonus, shown</li><li>Never-buy brands → hard reject</li></ul></div>
+    <div class="card in d4"><div style="font-size:26px;font-weight:800;margin-bottom:14px">🛡 Manipulation it catches</div>
+      <ul class="check reject" style="padding:0;margin:0"><li>4.8★ with <b>46% fake reviews</b> → rejected</li><li><b>$199 bait</b> from flagged seller → ignored</li><li>Price <b>12% above 30-day avg</b> → flagged</li><li>Can’t ship by deadline → excluded</li></ul></div>
+  </div>
+  <div class="in d6" style="margin-top:30px;display:flex;gap:30px;align-items:center;font-size:22px;color:var(--muted)">Adjusted rating = Bayesian over <b style="color:#fff">genuine</b> reviews only<div class="bar" style="flex:1"><i style="--w:86%"></i></div></div>
+  <div class="foot"><span>Glassbox</span><span>05 / 10</span></div>
+</section>
+
+<!-- 6 ACTION -->
+<section class="slide">
+  <div class="kicker in d1">Meaningful action, safely</div>
+  <h2 class="in d2">It buys. <span class="grad">Only with your signature.</span></h2>
+  <div class="grid2" style="align-items:start">
+    <div class="mand in d3">
+      <div style="font-weight:800;font-size:26px;margin-bottom:10px">✍️ Spending mandate <span style="font:600 18px var(--mono);color:var(--amber);float:right">expires 14:59</span></div>
+      <div class="row"><span>ID</span><span style="font-family:var(--mono)">mdt_07c04f899bb12642</span></div>
+      <div class="row"><span>Item</span><span>Auralis Q9 Wireless ANC</span></div>
+      <div class="row"><span>Merchant</span><span>Northwind · trust 96</span></div>
+      <div class="row"><span>Max amount</span><span><b>$303.06</b></span></div>
+      <span class="btnx">Approve &amp; buy</span>
+    </div>
+    <div class="in d4">
+      <ul class="check" style="padding:0;margin:0;font-size:27px"><li>Content-addressed mandate, 15-min expiry</li><li>6 guardrails checked & shown</li><li>Persona verifies a real human approved</li><li>Live price re-checked at checkout</li><li>Aborts on bait-and-switch</li><li>Cancel = refund <i>appended</i>, never deleted</li></ul>
+    </div>
+  </div>
+  <div class="foot"><span>Glassbox</span><span>06 / 10</span></div>
+</section>
+
+<!-- 7 LEDGER -->
+<section class="slide">
+  <div class="kicker in d1">Don’t trust. Verify.</div>
+  <h2 class="in d2">A hash-chained ledger <span class="grad">you verify in your browser.</span></h2>
+  <div class="chain in d3">
+    <div class="cb"><b>#10 Rank</b>9685b3…<br/>← 3bad66…</div><div class="lnk"></div>
+    <div class="cb t"><b>#11 Recommend</b>$303.06<br/>602640…</div><div class="lnk t"></div>
+    <div class="cb t2"><b>#12 Policy</b>2fa534…<br/>← 602640…</div><div class="lnk t"></div>
+    <div class="cb t2"><b>#13 Mandate</b>4a0609…<br/>← 2fa534…</div><div class="lnk t"></div>
+    <div class="cb t2"><b>#14 Order</b>GBX-YYHI<br/>← 4a0609…</div>
+  </div>
+  <div class="verdict in d5">hash = SHA-256(canonical event + prevHash) · edit one price → <span class="bad">chain breaks at exactly that event</span></div>
+  <p class="lead in d6" style="margin-top:20px;font-size:25px">Recomputed client-side with WebCrypto. Export as JSON or a Markdown receipt. The original record can’t be quietly rewritten.</p>
+  <div class="foot"><span>Glassbox</span><span>07 / 10</span></div>
+</section>
+
+<!-- 8 SPONSORS -->
+<section class="slide">
+  <div class="kicker in d1">The stack</div>
+  <h2 class="in d2" style="margin-bottom:24px">11 partners. <span class="grad">Each one has a job in the loop.</span></h2>
+  <div class="sp">
+    <div class="spc in d2"><b><i style="background:#f59e0b"></i>Senso</b><span>Trusted context layer grounds every claim</span></div>
+    <div class="spc in d3"><b><i style="background:#615eff"></i>Airbyte</b><span>Merchant catalogs &amp; price history</span></div>
+    <div class="spc in d3"><b><i style="background:#ec4899"></i>cognee</b><span>Personal memory graph</span></div>
+    <div class="spc in d4"><b><i style="background:#22d3ee"></i>Superlinked</b><span>SIE semantic fit &amp; ranking</span></div>
+    <div class="spc in d4"><b><i style="background:#8b5cf6"></i>Arcee AI</b><span>Small models, Pareto-frontier reasoning</span></div>
+    <div class="spc in d5"><b><i style="background:#3b82f6"></i>Statsig</b><span>Guardrail gates &amp; dynamic config</span></div>
+    <div class="spc in d5"><b><i style="background:#10b981"></i>Persona</b><span>Verifies a human signed the mandate</span></div>
+    <div class="spc in d6"><b><i style="background:#a855f7"></i>SingleStore</b><span>Real-time ledger store</span></div>
+    <div class="spc in d6"><b><i style="background:#1e61f0"></i>Amplitude</b><span>Mission → purchase funnel analytics</span></div>
+    <div class="spc in d7"><b><i style="background:#ef4444"></i>Firedrill</b><span>Adversarial simulation drills</span></div>
+    <div class="spc in d7"><b><i style="background:#f97316"></i>Guild AI</b><span>Agent evaluation over versions</span></div>
+    <div class="spc in d8" style="border-color:rgba(52,211,153,.4)"><b>⇄ Every call</b><span>written to the ledger as <span style="font-family:var(--mono);display:inline;color:#7ff0c4">stack.dispatched</span></span></div>
+  </div>
+  <div class="foot"><span>Glassbox</span><span>08 / 10</span></div>
+</section>
+
+<!-- 9 PROOF -->
+<section class="slide">
+  <div class="kicker in d1">It works</div>
+  <h2 class="in d2">Proof, not promises.</h2>
+  <div class="grid3" style="margin-top:30px;gap:30px">
+    <div class="card in d3"><div class="big-num" style="color:var(--green)">10/10</div><div class="lbl">adversarial safety drills passed</div></div>
+    <div class="card in d4"><div class="big-num grad">24/24</div><div class="lbl">end-to-end API checks</div></div>
+    <div class="card in d5"><div class="big-num grad">0</div><div class="lbl">dependencies · runs anywhere Node 20 runs</div></div>
+    <div class="card in d6"><div class="big-num grad">~25</div><div class="lbl">ledger events per purchase, each with evidence</div></div>
+    <div class="card in d7"><div class="big-num grad">&lt;50ms</div><div class="lbl">to plan a purchase locally</div></div>
+    <div class="card in d8"><div class="big-num grad">100%</div><div class="lbl">of decisions explainable, point by point</div></div>
+  </div>
+  <div class="foot"><span>Glassbox</span><span>09 / 10</span></div>
+</section>
+
+<!-- 10 VISION -->
+<section class="slide">
+  <div class="orb" style="width:700px;height:700px;background:#7c3aed;left:30%;top:-300px;opacity:.2"></div>
+  <div class="kicker in d1">What’s next</div>
+  <h2 class="in d2" style="font-size:84px">If an agent can spend your money,<br/><span class="grad">it should show you its receipts.</span></h2>
+  <div class="in d4" style="margin-top:40px">
+    <span class="pill">🔑 Ed25519-signed mandates</span><span class="pill">🌐 Agentic-commerce checkout</span><span class="pill">🕵️ Independent auditor agent</span><span class="pill">🧩 Browser extension</span><span class="pill">📦 Post-delivery learning loop</span>
+  </div>
+  <p class="lead in d6" style="margin-top:46px;font-size:34px;color:#fff"><b>github.com/vnmoorthy/glassbox</b> · <span class="grad" style="font-weight:800">vnmoorthy.github.io/glassbox</span></p>
+  <div class="foot"><span>Thank you ✦</span><span>10 / 10</span></div>
+</section>
+
+</div></div>
+<div class="progress" id="prog"></div><div class="counter" id="ctr"></div><div class="hint">← → / space · F fullscreen</div>
+<script>
+const slides=[...document.querySelectorAll('.slide')];let i=0;
+const blks=document.getElementById('blks');for(let k=0;k<22;k++){const b=document.createElement('span');b.className='blk';b.style.animationDelay=(1+k*.12)+'s';blks.appendChild(b)}
+function go(n){i=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,k)=>{s.classList.toggle('active',k===i);if(k===i){s.querySelectorAll('.in,.typing,.bar i,.node,.blk,.cb,.lnk,.btnx').forEach(el=>{el.style.animationName='none';el.offsetHeight;el.style.animationName=''})}});document.getElementById('prog').style.width=((i+1)/slides.length*100)+'%';document.getElementById('ctr').textContent=(i+1)+' / '+slides.length;history.replaceState(null,'','#'+(i+1))}
+function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);document.getElementById('deck').style.transform='scale('+s+')'}
+addEventListener('resize',fit);fit();
+addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();go(i+1)}if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();go(i-1)}if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}if(e.key==='Home')go(0);if(e.key==='End')go(slides.length-1)});
+addEventListener('click',e=>{go(e.clientX>innerWidth/3?i+1:i-1)});
+go((parseInt(location.hash.slice(1))||1)-1);
+</script>
+</body>
+</html>

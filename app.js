@@ -61,7 +61,7 @@ const ICONS = {
   keyboard: '<svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg>',
 };
 const productCat = id => PRODUCTS.find(p => p.id === id)?.category || 'headphones';
-const pimg = (c, cls = '') => `<div class="pimg ${cls}" style="background:radial-gradient(circle at 30% 25%,hsla(${c.hue},90%,70%,.9),hsla(${(c.hue + 50) % 360},80%,45%,.85) 60%,hsla(${(c.hue + 90) % 360},70%,25%,.9))">${ICONS[productCat(c.productId || c.id)]}</div>`;
+const pimg = (c, cls = '') => `<div class="pimg ${cls}" style="--h:${c.hue}">${ICONS[productCat(c.productId || c.id)]}</div>`;
 
 // ---------------- helpers ----------------
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2600); }
@@ -74,7 +74,9 @@ function sponsorTags(type) {
 const stepIcon = e => e.actor === 'user' ? '✓' : e.status === 'fail' ? '✕' : e.status === 'warn' ? '!' : '✓';
 
 // ---------------- navigation ----------------
+const CRUMB = { agent: 'Agent', orders: 'Orders', ledger: 'Audit ledger', memory: 'Memory & rules', drills: 'Safety drills', stack: 'Sponsor stack' };
 function show(view) {
+  $('#crumb').textContent = CRUMB[view] || view;
   $$('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
   $$('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + view));
   if (view === 'orders') renderOrders();
@@ -171,7 +173,7 @@ function renderDecision() {
   let actHTML = '';
   if (run.status === 'awaiting_approval') {
     const m = run.mandate;
-    actHTML = `<div class="panel mandate"><div class="panel-head">✍️ Spending mandate — your approval required <span class="countdown" id="countdown"></span></div>
+    actHTML = `<div class="panel mandate"><div class="panel-head">Spending mandate · approval required <span class="countdown" id="countdown"></span></div>
       <dl class="kv"><dt>Mandate ID</dt><dd class="mono">${esc(m.id)}</dd><dt>Item</dt><dd>${esc(rec.name)}</dd><dt>Merchant</dt><dd>${esc(rec.offer.merchantName)} · trust ${rec.offer.trust}/100</dd>
       <dt>Max amount</dt><dd><b>${money(m.maxAmount)}</b> USD</dd><dt>Pay with</dt><dd>${esc(m.payment)}</dd><dt>Ship to</dt><dd>${esc(m.shipTo)}</dd></dl>
       <ul class="checks">${m.checks.map(c => `<li><span class="${c.pass ? 'p' : 'f'}">${c.pass ? '✓' : '✗'}</span>${esc(c.rule)} <span class="muted">${esc(c.detail)}</span></li>`).join('')}</ul>
@@ -180,7 +182,7 @@ function renderDecision() {
   } else if (run.order) {
     const o = run.order;
     actHTML = `<div class="panel receipt"><div class="seal">SEALED<br/>${run.ledger.length} EVT</div>
-      <div class="big">${o.status === 'cancelled' ? '↩︎ Order cancelled' : '✓ Order confirmed'}</div>
+      <div class="big">${o.status === 'cancelled' ? 'Order cancelled · refunded' : 'Order confirmed'}</div>
       <dl class="kv" style="margin-top:12px"><dt>Order</dt><dd class="mono">${esc(o.id)}</dd><dt>Charged</dt><dd><b>${money(o.total)}</b> to ${esc(o.payment)}${o.status === 'cancelled' ? ' · <span style="color:var(--green)">refunded</span>' : ''}</dd>
       <dt>Arrives</dt><dd>${new Date(o.eta).toDateString()} · tracking <span class="mono">${esc(o.tracking)}</span></dd><dt>Return by</dt><dd>${new Date(o.returnBy).toDateString()}</dd>
       <dt>Mandate</dt><dd class="mono">${esc(o.mandateId)}</dd><dt>Ledger root</dt><dd class="mono">${short(run.root)}</dd></dl>
@@ -220,7 +222,7 @@ async function act(kind, arg) {
 function renderCandidates() {
   const run = state.run; if (!run.candidates.length) return;
   $('#comparePanel').classList.remove('hidden');
-  const COLORS = { fit: '#a78bfa', quality: '#60a5fa', value: '#22d3ee', trust: '#34d399', delivery: '#fbbf24', returns: '#f472b6', personal: '#fb923c' };
+  const COLORS = { fit: '#4c90f0', quality: '#32a467', value: '#00a396', trust: '#9881f3', delivery: '#ec9a3c', returns: '#d1980b', personal: '#e76a6e' };
   $('#cands').innerHTML = run.candidates.map((c, i) => {
     const isTop = run.recommendation && c.productId === run.recommendation.productId;
     return `<div class="cand ${isTop ? 'top' : ''} ${c.eligible ? '' : 'rejected'}" style="animation-delay:${i * 60}ms">
@@ -310,8 +312,8 @@ async function verify(animate = true) {
     if (animate) await sleep(45);
   }
   $('#integrity').innerHTML = v.ok
-    ? `<div class="int-banner ok"><span class="big">🔒</span><div><b>Chain intact — ${v.count} events verified in your browser</b><div class="muted mono">Recomputed every SHA-256 hash with WebCrypto · root ${v.root}</div></div></div>`
-    : `<div class="int-banner bad"><span class="big">⚠️</span><div><b>Tampering detected at event #${v.brokenAt}</b><div class="muted">Event #${v.brokenAt} no longer matches its hash, so every later link is broken too. The original record can’t be quietly rewritten.</div></div><button class="btn" id="restore" style="margin-left:auto">Restore original</button></div>`;
+    ? `<div class="int-banner ok"><span class="big" style="color:var(--green);font:700 11px var(--mono);letter-spacing:.1em;border:1px solid var(--green);padding:4px 8px">VERIFIED</span><div><b>Chain intact — ${v.count} events verified in your browser</b><div class="muted mono">Recomputed every SHA-256 hash with WebCrypto · root ${v.root}</div></div></div>`
+    : `<div class="int-banner bad"><span class="big" style="color:var(--red);font:700 11px var(--mono);letter-spacing:.1em;border:1px solid var(--red);padding:4px 8px">BREACH</span><div><b>Tampering detected at event #${v.brokenAt}</b><div class="muted">Event #${v.brokenAt} no longer matches its hash, so every later link is broken too. The original record can’t be quietly rewritten.</div></div><button class="btn" id="restore" style="margin-left:auto">Restore original</button></div>`;
   $('#restore') && ($('#restore').onclick = async () => { state.tampered = null; await drawChain(); verify(); toast('Original ledger restored'); });
   return v;
 }
@@ -418,6 +420,9 @@ async function refreshStats() {
   $('#modeText').textContent = api.mode === 'server' ? 'Server API · ledger on disk' : 'Local mode · runs in your browser';
   state.profile = await api.profile();
   $('#heroName').textContent = state.profile.name.split(' ')[0];
+  $('#topUser').textContent = state.profile.name.toLowerCase().replace(/\s+/g, '.');
+  const tickClock = () => { $('#clock').textContent = new Date().toISOString().slice(11, 19); };
+  tickClock(); setInterval(tickClock, 1000);
   await loadStack();
   refreshStats();
   const q = new URLSearchParams(location.search);

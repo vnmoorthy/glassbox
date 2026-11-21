@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="bg-orbs" aria-hidden="true"><span></span><span></span><span></span></div>
+  <div class="classbar">Sandbox environment // synthetic merchant data // no real payments</div>
   <div class="app">
     <aside class="nav">
       <div class="brand">
@@ -37,11 +37,16 @@
       </div>
     </aside>
 
+    <header class="topbar">
+      <div class="crumbs"><span>GLASSBOX</span><span class="sep">/</span><span>Operations</span><span class="sep">/</span><b id="crumb">Agent</b></div>
+      <div class="top-right"><span><span class="live-dot"></span>LEDGER ONLINE</span><span>OPERATOR <span class="k" id="topUser">alex.rivera</span></span><span>UTC <span class="k" id="clock">--:--:--</span></span></div>
+    </header>
+
     <main>
       <!-- AGENT -->
       <section class="view active" id="view-agent">
         <div class="hero" id="hero">
-          <div class="eyebrow"><span class="spark"></span> Personal shopping agent · every step on the record</div>
+          <div class="eyebrow"><span class="spark"></span> Personal shopping agent · audit mode on · every step on the record</div>
           <h1>What should I buy for you, <span class="grad" id="heroName">Alex</span>?</h1>
           <p class="lede">Describe the job. Glassbox checks your memory and your rules, compares real offers, catches fake reviews and price spikes, asks before it spends anything, and keeps a <b>hash-chained receipt</b> of every step.</p>
           <form class="composer" id="composer">
