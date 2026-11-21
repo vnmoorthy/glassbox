@@ -1,0 +1,18 @@
+// The Glassbox sponsor stack — which partner powers which step of the agent loop.
+// `stages` are ledger event types; the UI tags each trace step with the sponsor that serves it.
+export const SPONSORS = [
+  { id: 'senso', name: 'Senso', color: '#f59e0b', role: 'Trusted context layer', what: 'Grounds every product & merchant claim in a verified context base (return policies, specs, merchant facts) before the agent may cite it.', stages: ['sources.queried', 'recommendation.made'], env: ['SENSO_API_KEY'] },
+  { id: 'airbyte', name: 'Airbyte', color: '#615eff', role: 'Merchant data connectors', what: 'Syncs merchant catalogs, offers and 90-day price history into the agent’s context so price-spike checks use real history.', stages: ['sources.queried'], env: ['AIRBYTE_API_KEY'] },
+  { id: 'cognee', name: 'cognee', color: '#ec4899', role: 'Personal memory graph', what: 'Long-term memory of your sizes, tastes, returns and past purchases — recalled before every decision and updated after every order.', stages: ['memory.recalled', 'memory.updated'], env: ['COGNEE_API_KEY'] },
+  { id: 'superlinked', name: 'Superlinked SIE', color: '#22d3ee', role: 'Semantic relevance & ranking', what: 'Embeds the mission and each product to score requirement fit beyond keyword matching (SIE Serverless inference).', stages: ['candidate.scored', 'ranking.completed'], env: ['SUPERLINKED_API_KEY'] },
+  { id: 'arcee', name: 'Arcee AI', color: '#8b5cf6', role: 'Pareto-frontier reasoning', what: 'Small, cheap open-weight models for intent parsing and the plain-English rationale — big-model quality where it matters, pennies everywhere else.', stages: ['intent.parsed', 'recommendation.made'], env: ['ARCEE_API_KEY'] },
+  { id: 'statsig', name: 'Statsig', color: '#3b82f6', role: 'Guardrail flags & experiments', what: 'Feature gates and dynamic configs for spending guardrails, so policy can change (or A/B test) without redeploying the agent.', stages: ['policy.loaded', 'policy.checked'], env: ['STATSIG_SERVER_KEY'] },
+  { id: 'persona', name: 'Persona', color: '#10b981', role: 'Human-in-the-loop verification', what: 'Verifies that a real, authorised human approved the spending mandate — an agent can never approve its own purchase.', stages: ['mandate.requested', 'mandate.approved'], env: ['PERSONA_API_KEY', 'PERSONA_TEMPLATE_ID'] },
+  { id: 'singlestore', name: 'SingleStore', color: '#a855f7', role: 'Real-time ledger store', what: 'Every hash-chained ledger event is written to SingleStoreDB for real-time audit queries across all of your agent’s runs.', stages: ['order.placed', 'receipt.issued'], env: ['SINGLESTORE_HOST', 'SINGLESTORE_USER', 'SINGLESTORE_PASSWORD', 'SINGLESTORE_DATABASE'] },
+  { id: 'amplitude', name: 'Amplitude', color: '#1e61f0', role: 'Agent analytics', what: 'Streams every agent step as a product-analytics event — funnels from mission → approval → purchase, drop-offs, and guardrail hits.', stages: ['mission.received', 'order.placed', 'mandate.rejected'], env: ['AMPLITUDE_API_KEY'] },
+  { id: 'firedrill', name: 'Firedrill', color: '#ef4444', role: 'Adversarial simulation', what: 'Runs the agent against fake-review traps, bait merchants, price spikes and budget breaches before it is trusted with real money.', stages: ['drill'], env: ['FIREDRILL_API_KEY'] },
+  { id: 'guild', name: 'Guild AI', color: '#f97316', role: 'Agent evaluation', what: 'Scores each drill and run (did the agent obey policy, cite evidence, and refuse when it should?) and tracks it across versions.', stages: ['drill'], env: ['GUILD_API_KEY'] },
+];
+export const STAGE_SPONSORS = {};
+for (const s of SPONSORS) for (const st of s.stages) (STAGE_SPONSORS[st] ||= []).push(s.id);
+STAGE_SPONSORS['candidate.rejected'] = ['superlinked'];

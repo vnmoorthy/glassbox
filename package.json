@@ -1,0 +1,15 @@
+{
+  "name": "glassbox-agent",
+  "version": "1.0.0",
+  "description": "Glassbox — a personal shopping agent with a tamper-evident, hash-chained audit trail. Every decision has receipts.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node test/e2e.mjs"
+  },
+  "engines": { "node": ">=20" },
+  "keywords": ["ai-agent", "shopping-agent", "audit-trail", "personal-agent", "agentic-commerce", "hash-chain", "explainable-ai"],
+  "license": "MIT"
+}

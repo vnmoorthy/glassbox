@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Glassbox — the shopping agent with receipts</title>
+  <meta name="description" content="A personal shopping agent that shows its work: every decision, source and dollar is written to a tamper-evident, hash-chained audit trail." />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-orbs" aria-hidden="true"><span></span><span></span><span></span></div>
+  <div class="app">
+    <aside class="nav">
+      <div class="brand">
+        <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><rect x="3" y="3" width="26" height="26" rx="8" fill="none" stroke="url(#lg)" stroke-width="2.5"/><path d="M10 12h12M10 16h12M10 20h7" stroke="url(#lg)" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <div><div class="brand-name">Glassbox</div><div class="brand-sub">agent with receipts</div></div>
+      </div>
+      <nav>
+        <button class="nav-btn active" data-view="agent"><svg viewBox="0 0 24 24"><path d="M12 3l2.4 5.6L20 11l-5.6 2.4L12 19l-2.4-5.6L4 11l5.6-2.4z"/></svg>Agent</button>
+        <button class="nav-btn" data-view="orders"><svg viewBox="0 0 24 24"><path d="M4 7h16l-1.5 11a2 2 0 0 1-2 1.7H7.5a2 2 0 0 1-2-1.7L4 7zM9 7V5a3 3 0 0 1 6 0v2"/></svg>Orders <span class="pill" id="ordersCount">0</span></button>
+        <button class="nav-btn" data-view="ledger"><svg viewBox="0 0 24 24"><path d="M4 6h7v5H4zM13 13h7v5h-7zM11 8.5h2.5a2 2 0 0 1 2 2V13"/></svg>Audit ledger</button>
+        <button class="nav-btn" data-view="memory"><svg viewBox="0 0 24 24"><path d="M12 4a5 5 0 0 0-5 5c0 2 1 3 2 4v3h6v-3c1-1 2-2 2-4a5 5 0 0 0-5-5zM10 20h4"/></svg>Memory &amp; rules</button>
+        <button class="nav-btn" data-view="drills"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z M9 12l2 2 4-4"/></svg>Safety drills</button>
+        <button class="nav-btn" data-view="stack"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5M3 17.5l9 5 9-5"/></svg>Sponsor stack <span class="pill" id="liveCount">0</span></button>
+      </nav>
+      <div class="nav-foot">
+        <div class="mode" id="modeBadge"><span class="dot"></span><span id="modeText">connecting…</span></div>
+        <div class="stat-grid">
+          <div><b id="statRuns">0</b><span>runs</span></div>
+          <div><b id="statEvents">0</b><span>events</span></div>
+          <div><b id="statSpent">$0</b><span>spent</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <main>
+      <!-- AGENT -->
+      <section class="view active" id="view-agent">
+        <div class="hero" id="hero">
+          <div class="eyebrow"><span class="spark"></span> Personal shopping agent · every step on the record</div>
+          <h1>What should I buy for you, <span class="grad" id="heroName">Alex</span>?</h1>
+          <p class="lede">Describe the job. Glassbox checks your memory and your rules, compares real offers, catches fake reviews and price spikes, asks before it spends anything, and keeps a <b>hash-chained receipt</b> of every step.</p>
+          <form class="composer" id="composer">
+            <textarea id="mission" rows="2" placeholder="e.g. Noise-cancelling headphones for long flights under $300" autocomplete="off"></textarea>
+            <div class="composer-row">
+              <div class="chips" id="chips"></div>
+              <button class="btn primary lg" id="runBtn" type="submit"><span>Run agent</span><kbd>⌘↵</kbd></button>
+            </div>
+          </form>
+        </div>
+
+        <div class="workspace hidden" id="workspace">
+          <div class="ws-head">
+            <div>
+              <div class="eyebrow">Mission</div>
+              <h2 id="wsMission">—</h2>
+            </div>
+            <div class="ws-actions">
+              <span class="status-chip" id="wsStatus">planning</span>
+              <button class="btn ghost" id="newMission">New mission</button>
+            </div>
+          </div>
+          <div class="ws-grid">
+            <div class="panel trace">
+              <div class="panel-head"><span class="live"></span> Agent trace <span class="muted" id="traceCount"></span></div>
+              <ol class="steps" id="steps"></ol>
+            </div>
+            <div class="decision" id="decision"></div>
+          </div>
+          <div class="panel compare hidden" id="comparePanel">
+            <div class="panel-head">Every option considered — and why <span class="muted">score = fit 30 · quality 22 · value 16 · trust 10 · delivery 8 · returns 6 · personal 8</span></div>
+            <div class="cands" id="cands"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ORDERS -->
+      <section class="view" id="view-orders">
+        <header class="view-head"><div><div class="eyebrow">History</div><h2>Orders &amp; runs</h2></div><button class="btn ghost danger" id="clearRuns">Clear history</button></header>
+        <div id="ordersList" class="orders"></div>
+      </section>
+
+      <!-- LEDGER -->
+      <section class="view" id="view-ledger">
+        <header class="view-head">
+          <div><div class="eyebrow">Don’t trust — verify</div><h2>Audit ledger</h2></div>
+          <div class="ledger-tools">
+            <select id="runSelect"></select>
+            <button class="btn" id="verifyBtn">Verify integrity</button>
+            <button class="btn ghost warn" id="tamperBtn">Simulate tampering</button>
+            <button class="btn ghost" id="exportJson">Export JSON</button>
+            <button class="btn ghost" id="exportMd">Receipt .md</button>
+          </div>
+        </header>
+        <div class="integrity" id="integrity"></div>
+        <div class="chain" id="chain"></div>
+      </section>
+
+      <!-- MEMORY -->
+      <section class="view" id="view-memory">
+        <header class="view-head"><div><div class="eyebrow">What the agent knows &amp; what it may do</div><h2>Memory &amp; rules</h2></div>
+          <div class="ledger-tools"><button class="btn ghost" id="resetProfile">Reset demo profile</button><button class="btn primary" id="saveProfile">Save</button></div></header>
+        <form class="mem-grid" id="memForm" onsubmit="return false">
+          <div class="panel">
+            <div class="panel-head">About you</div>
+            <label>Name<input name="name" /></label>
+            <label>Ship to<input name="address" /></label>
+            <label>Payment method <input name="payment" disabled /></label>
+            <label>Shoe size<input name="shoeSize" /></label>
+            <label class="toggle"><input type="checkbox" name="wearsGlasses" /><span></span> I wear glasses</label>
+          </div>
+          <div class="panel">
+            <div class="panel-head">Taste</div>
+            <label>Preferred brands <small>comma-separated</small><input name="preferredBrands" /></label>
+            <label>Never buy <small>comma-separated</small><input name="avoidBrands" /></label>
+            <label>Values <small>e.g. eco</small><input name="values" /></label>
+            <div class="panel-head sub">Purchase history</div>
+            <ul class="history" id="history"></ul>
+          </div>
+          <div class="panel">
+            <div class="panel-head">Spending guardrails</div>
+            <label>Max per order ($)<input type="number" name="maxPerOrder" min="1" /></label>
+            <label>Min merchant trust (0–100)<input type="number" name="minMerchantTrust" min="0" max="100" /></label>
+            <label>Max fake-review share (%)<input type="number" name="maxFakeReviewPct" min="0" max="100" /></label>
+            <label>Mandate expiry (minutes)<input type="number" name="mandateTtlMinutes" min="1" /></label>
+            <div class="panel-head sub">Blocked merchants</div>
+            <div id="merchantBoxes" class="merchant-boxes"></div>
+          </div>
+        </form>
+      </section>
+      <!-- DRILLS -->
+      <section class="view" id="view-drills">
+        <header class="view-head"><div><div class="eyebrow">Firedrill simulation · Guild evaluation</div><h2>Safety drills</h2><p class="muted" style="margin:6px 0 0;font-size:13.5px">Ten adversarial scenarios the agent must pass before it’s trusted with your card. Runs against the demo profile.</p></div>
+          <button class="btn primary" id="runDrills">Run all drills</button></header>
+        <div class="scoreboard" id="drillScore"></div>
+        <div class="drills" id="drillList"></div>
+      </section>
+
+      <!-- STACK -->
+      <section class="view" id="view-stack">
+        <header class="view-head"><div><div class="eyebrow">Every partner has a job in the loop</div><h2>Sponsor stack</h2><p class="muted" style="margin:6px 0 0;font-size:13.5px">Each step in the trace is tagged with the partner that serves it. Add keys to <span class="mono">.env</span> to switch an adapter from local to live; every call is recorded.</p></div>
+          <button class="btn" id="pingStack">Ping all integrations</button></header>
+        <div class="stack" id="stackGrid"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-card">
+      <button class="x" id="drawerClose" aria-label="Close">×</button>
+      <div id="drawerBody"></div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
