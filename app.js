@@ -428,5 +428,10 @@ async function refreshStats() {
   refreshStats();
   const q = new URLSearchParams(location.search);
   if (q.get('view')) show(q.get('view'));
+  // demo/recording hooks: ?q=...&auto=approve · ?view=ledger&tamper=1 · ?view=drills&run=1
+  const waitFor = async (sel, ms = 15000) => { const t0 = Date.now(); while (Date.now() - t0 < ms) { const el = $(sel); if (el && !el.disabled) return el; await sleep(100); } };
+  if (q.get('auto') === 'approve') waitFor('#approveBtn').then(b => b && b.click());
+  if (q.get('tamper')) sleep(1200).then(() => $('#tamperBtn').click());
+  if (q.get('run') && q.get('view') === 'drills') sleep(300).then(() => $('#runDrills').click());
   if (q.get('q')) { $('#mission').value = q.get('q'); $('#composer').requestSubmit(); } else $('#mission').focus();
 })();
