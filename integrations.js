@@ -50,12 +50,11 @@ export const ADAPTERS = {
       const auth = basic(env('SINGLESTORE_USER'), env('SINGLESTORE_PASSWORD'));
       const database = env('SINGLESTORE_DATABASE');
       await http(url, { auth, body: { database, sql: 'CREATE TABLE IF NOT EXISTS glassbox_ledger (run_id VARCHAR(64), seq INT, ts DATETIME(6), actor VARCHAR(16), type VARCHAR(64), title TEXT, status VARCHAR(8), hash CHAR(64), prev_hash CHAR(64), body JSON, PRIMARY KEY (run_id, seq))' } });
-      let n = 0;
-      for (const e of events) {
-        await http(url, { auth, body: { database, sql: 'REPLACE INTO glassbox_ledger VALUES (?,?,?,?,?,?,?,?,?,?)', args: [run.id, e.seq, e.ts.replace('T', ' ').replace('Z', ''), e.actor, e.type, e.title, e.status, e.hash, e.prevHash, JSON.stringify(e)] } });
-        n++;
-      }
-      return `wrote ${n} ledger rows to ${database}.glassbox_ledger`;
+      if (!events.length) return 'ledger table ready';
+      const sql = 'REPLACE INTO glassbox_ledger VALUES ' + events.map(() => '(?,?,?,?,?,?,?,?,?,?)').join(',');
+      const args = events.flatMap(e => [run.id, e.seq, e.ts.replace('T', ' ').replace('Z', ''), e.actor, e.type, e.title, e.status, e.hash, e.prevHash, JSON.stringify(e)]);
+      const r = await http(url, { auth, timeout: 15000, body: { database, sql, args } });
+      return `wrote ${r?.rowsAffected ?? events.length} ledger rows to ${database}.glassbox_ledger`;
     },
     local: ({ events }) => `${events.length} ledger rows persisted to data/store.json`,
   },
@@ -103,8 +102,22 @@ export const ADAPTERS = {
     async live({ run, profile }) {
       const base = env('COGNEE_BASE_URL').replace(/\/$/, ''); // e.g. https://<tenant>.aws.cognee.ai
       const headers = { 'X-Api-Key': env('COGNEE_API_KEY') };
-      const r = await http(base + '/api/v1/search', { headers, body: { query: `What do we know about ${profile.name}'s preferences relevant to: ${run.mission}`, search_type: 'GRAPH_COMPLETION' } });
-      return `memory search returned ${Array.isArray(r) ? r.length : 1} result(s)`;
+      const query = `What do we know about ${profile.name}'s preferences relevant to: ${run.mission}`;
+      try {
+        const r = await http(base + '/api/v1/search', { headers, timeout: 12000, body: { query, search_type: 'CHUNKS' } });
+        return `memory graph search (CHUNKS) returned ${Array.isArray(r) ? r.length : 1} result(s)`;
+      } catch (e) {
+        if (!/HTTP (404|409)/.test(e.message)) throw e;
+        // empty graph → seed it with the user's profile facts (add + cognify in one call)
+        const facts = [`${profile.name} wears glasses: ${profile.wearsGlasses}`, `Shoe size: ${profile.shoeSize}`, `Preferred brands: ${(profile.preferredBrands || []).join(', ')}`, `Never buy: ${(profile.avoidBrands || []).join(', ')}`, `Values: ${(profile.values || []).join(', ')}`, ...(profile.pastPurchases || []).map(p => `${p.item} was ${p.outcome}: ${p.note || ''}`)].join('\n');
+        const form = new FormData(); form.append('datasetName', 'glassbox_memory'); form.append('raw_data', facts);
+        const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), 12000);
+        try {
+          const r = await fetch(base + '/api/v1/remember', { method: 'POST', headers, body: form, signal: ctrl.signal });
+          if (!r.ok) throw new Error(`HTTP ${r.status} ${(await r.text()).slice(0, 140)}`);
+        } finally { clearTimeout(t); }
+        return `seeded memory graph with ${facts.split('\n').length} profile facts (dataset glassbox_memory)`;
+      }
     },
     local: ({ profile }) => `recalled ${2 + (profile.pastPurchases || []).length + (profile.preferredBrands || []).length} facts from the local memory graph`,
   },
